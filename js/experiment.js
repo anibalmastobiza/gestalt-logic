@@ -1,11 +1,14 @@
 var CONFIG = {
     GOOGLE_SCRIPT_URL: 'YOUR_GOOGLE_SCRIPT_URL_HERE',
-    TOTAL_TRIALS: 8,
-    COMPLETION_CODE_PREFIX: 'GL'
+    PROLIFIC_REDIRECT_URL: 'https://app.prolific.com/submissions/complete?cc=XXXXXXXX',
+    TOTAL_TRIALS: 8
 };
 
 var state = {
     participantId: null,
+    prolificPid: null,
+    studyId: null,
+    sessionId: null,
     startTime: null,
     currentTrial: 0,
     trials: [],
@@ -17,15 +20,6 @@ function generateId() {
     return 'xxxx-xxxx'.replace(/x/g, function() {
         return Math.floor(Math.random() * 16).toString(16);
     });
-}
-
-function generateCompletionCode() {
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var code = CONFIG.COMPLETION_CODE_PREFIX + '-';
-    for (var i = 0; i < 6; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return code;
 }
 
 function getUrlParams() {
@@ -54,45 +48,73 @@ function drawShape(x, y, shape, size) {
     var half = size / 2;
     
     if (shape === 'diamond') {
-        return '<polygon points="' + x + ',' + (y - half) + ' ' + (x + half) + ',' + y + ' ' + x + ',' + (y + half) + ' ' + (x - half) + ',' + y + '" fill="currentColor"/>';
+        return '<polygon points="' + x + ',' + (y - half) + ' ' + (x + half) + ',' + y + ' ' + x + ',' + (y + half) + ' ' + (x - half) + ',' + y + '" fill="#6366f1"/>';
     } else if (shape === 'circle') {
-        return '<circle cx="' + x + '" cy="' + y + '" r="' + half + '" fill="currentColor"/>';
+        return '<circle cx="' + x + '" cy="' + y + '" r="' + half + '" fill="#6366f1"/>';
     } else if (shape === 'square') {
-        return '<rect x="' + (x - half) + '" y="' + (y - half) + '" width="' + size + '" height="' + size + '" fill="currentColor"/>';
+        return '<rect x="' + (x - half) + '" y="' + (y - half) + '" width="' + size + '" height="' + size + '" fill="#6366f1"/>';
     } else if (shape === 'triangle') {
-        return '<polygon points="' + x + ',' + (y - half) + ' ' + (x + half) + ',' + (y + half) + ' ' + (x - half) + ',' + (y + half) + '" fill="currentColor"/>';
+        return '<polygon points="' + x + ',' + (y - half) + ' ' + (x + half) + ',' + (y + half) + ' ' + (x - half) + ',' + (y + half) + '" fill="#6366f1"/>';
     }
     return '';
 }
 
-function drawStructure(structure, showConclusion) {
-    var svg = '<svg class="structure-svg" viewBox="0 0 280 200">';
+function drawArrow(x1, y1, x2, y2, dashed) {
+    var angle = Math.atan2(y2 - y1, x2 - x1);
+    var length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     
-    // Draw edges
+    var shortenStart = 12;
+    var shortenEnd = 12;
+    
+    var startX = x1 + Math.cos(angle) * shortenStart;
+    var startY = y1 + Math.sin(angle) * shortenStart;
+    var endX = x2 - Math.cos(angle) * shortenEnd;
+    var endY = y2 - Math.sin(angle) * shortenEnd;
+    
+    var arrowSize = 6;
+    var arrowAngle = Math.PI / 6;
+    var arrow1X = endX - arrowSize * Math.cos(angle - arrowAngle);
+    var arrow1Y = endY - arrowSize * Math.sin(angle - arrowAngle);
+    var arrow2X = endX - arrowSize * Math.cos(angle + arrowAngle);
+    var arrow2Y = endY - arrowSize * Math.sin(angle + arrowAngle);
+    
+    var dashAttr = dashed ? ' stroke-dasharray="4,4"' : '';
+    var opacity = dashed ? '0.5' : '1';
+    
+    var svg = '<line x1="' + startX + '" y1="' + startY + '" x2="' + endX + '" y2="' + endY + '" stroke="#4a4a6a" stroke-width="2" opacity="' + opacity + '"' + dashAttr + '/>';
+    svg += '<polygon points="' + endX + ',' + endY + ' ' + arrow1X + ',' + arrow1Y + ' ' + arrow2X + ',' + arrow2Y + '" fill="#4a4a6a" opacity="' + opacity + '"/>';
+    
+    return svg;
+}
+
+function drawStructure(structure, showConclusion) {
+    var svg = '<svg class="structure-svg" viewBox="0 0 280 220">';
+    
+    var nodeMap = {};
+    for (var n = 0; n < structure.nodes.length; n++) {
+        nodeMap[structure.nodes[n].id] = structure.nodes[n];
+    }
+    
     for (var i = 0; i < structure.edges.length; i++) {
         var edge = structure.edges[i];
-        var fromNode = null;
-        var toNode = null;
-        
-        for (var j = 0; j < structure.nodes.length; j++) {
-            if (structure.nodes[j].id === edge.from) fromNode = structure.nodes[j];
-            if (structure.nodes[j].id === edge.to) toNode = structure.nodes[j];
-        }
+        var fromNode = nodeMap[edge.from];
+        var toNode = nodeMap[edge.to];
         
         if (fromNode && toNode) {
-            if (!showConclusion && toNode.id === 'C') continue;
-            
-            var dashArray = edge.dashed ? 'stroke-dasharray="4"' : '';
-            svg += '<line x1="' + fromNode.x + '" y1="' + fromNode.y + '" x2="' + toNode.x + '" y2="' + toNode.y + '" stroke="#4a4a5a" stroke-width="2" ' + dashArray + '/>';
+            var isToConclusion = toNode.id === 'C';
+            if (!showConclusion && isToConclusion) {
+                svg += drawArrow(fromNode.x, fromNode.y, toNode.x, toNode.y - 10, true);
+            } else {
+                svg += drawArrow(fromNode.x, fromNode.y, toNode.x, toNode.y, edge.dashed);
+            }
         }
     }
     
-    // Draw nodes
     for (var k = 0; k < structure.nodes.length; k++) {
         var node = structure.nodes[k];
         
         if (!showConclusion && node.id === 'C') {
-            svg += '<text x="' + node.x + '" y="' + (node.y + 6) + '" text-anchor="middle" fill="#6366f1" font-size="24" font-weight="bold">?</text>';
+            svg += '<text x="' + node.x + '" y="' + (node.y + 6) + '" text-anchor="middle" fill="#6366f1" font-size="28" font-weight="bold">?</text>';
         } else {
             svg += drawShape(node.x, node.y, node.shape, 20);
         }
@@ -105,11 +127,11 @@ function drawStructure(structure, showConclusion) {
 function renderPhase1(trial) {
     var container = document.getElementById('trial-content');
     
-    var html = '<div class="phase-label">Structure</div>' +
+    var html = '<div class="phase-label">Argument Structure</div>' +
         '<div class="structure-display">' +
         drawStructure(trial.structure, false) +
         '</div>' +
-        '<p class="prediction-prompt">What shape should the conclusion be?</p>' +
+        '<p class="prediction-prompt">What shape should the conclusion (?) be?</p>' +
         '<div class="shape-options">' +
         '<button class="btn-shape" data-shape="diamond">' +
         '<svg viewBox="0 0 40 40"><polygon points="20,5 35,20 20,35 5,20" fill="currentColor"/></svg>' +
@@ -168,7 +190,7 @@ function renderPhase2(trial) {
         premisesHtml += '<p class="premise">' + trial.content.premises[i] + '</p>';
     }
     
-    var html = '<div class="phase-label">Argument</div>' +
+    var html = '<div class="phase-label">Full Argument</div>' +
         '<div class="structure-display">' +
         drawStructure(trial.structure, true) +
         '</div>' +
@@ -185,7 +207,7 @@ function renderPhase2(trial) {
         '</div>' +
         '</div>' +
         '<div class="rating-group">' +
-        '<p class="rating-label">How satisfying is the structure?</p>' +
+        '<p class="rating-label">How satisfying is the argument structure?</p>' +
         '<div class="rating-slider-container">' +
         '<div class="slider-labels"><span>Unsatisfying</span><span>Satisfying</span></div>' +
         '<input type="range" class="slider" id="satisfaction-slider" min="1" max="7" value="4">' +
@@ -243,13 +265,13 @@ function startTrials() {
 }
 
 function submitData() {
-    var completionCode = generateCompletionCode();
-    
     var payload = {
         participantId: state.participantId,
+        prolificPid: state.prolificPid,
+        studyId: state.studyId,
+        sessionId: state.sessionId,
         startTime: state.startTime,
         endTime: new Date().toISOString(),
-        completionCode: completionCode,
         trials: state.responses,
         postStudy: state.postStudy
     };
@@ -269,19 +291,28 @@ function submitData() {
         console.log('Data:', payload);
     }
     
-    document.getElementById('completion-code').textContent = completionCode;
     showScreen('debrief');
+    
+    setTimeout(function() {
+        if (CONFIG.PROLIFIC_REDIRECT_URL !== 'https://app.prolific.com/submissions/complete?cc=XXXXXXXX') {
+            window.location.href = CONFIG.PROLIFIC_REDIRECT_URL;
+        }
+    }, 3000);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Gestalt Logic initialized');
     
-    // Start button
+    var urlParams = getUrlParams();
+    state.prolificPid = urlParams.prolificPid;
+    state.studyId = urlParams.studyId;
+    state.sessionId = urlParams.sessionId;
+    state.participantId = urlParams.prolificPid || generateId();
+    
     document.getElementById('start-btn').addEventListener('click', function() {
         showScreen('consent');
     });
     
-    // Consent
     var consentCheck = document.getElementById('consent-check');
     var consentBtn = document.getElementById('consent-btn');
     
@@ -290,18 +321,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     consentBtn.addEventListener('click', function() {
-        var urlParams = getUrlParams();
-        state.participantId = urlParams.prolificPid || generateId();
         state.startTime = new Date().toISOString();
         showScreen('instructions');
     });
     
-    // Start trials
     document.getElementById('start-trials-btn').addEventListener('click', function() {
         startTrials();
     });
     
-    // Post study form
     document.getElementById('post-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
