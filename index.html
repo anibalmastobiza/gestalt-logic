@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestalt Logic Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- LANDING -->
+    <section id="landing" class="screen active">
+        <div class="container">
+            <div class="logo">
+                <svg viewBox="0 0 60 60" class="logo-icon">
+                    <polygon points="30,5 55,50 5,50" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="30" cy="35" r="8" fill="currentColor"/>
+                </svg>
+            </div>
+            <h1>Gestalt Logic</h1>
+            <p class="tagline">How do we perceive the shape of reasoning?</p>
+            <div class="study-info">
+                <div class="info-item">
+                    <span class="info-icon">⏱</span>
+                    <span>5 minutes</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">◆</span>
+                    <span>8 trials</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="start-btn">Begin</button>
+            <p class="irb">Computational Cognition Lab · IRB #2024-GL-001</p>
+        </div>
+    </section>
+
+    <!-- CONSENT -->
+    <section id="consent" class="screen">
+        <div class="container">
+            <div class="progress-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <h2>Consent</h2>
+            <div class="consent-box">
+                <p><strong>Purpose:</strong> Investigating how structural properties of arguments affect logical judgment.</p>
+                <p><strong>Task:</strong> View argument structures, predict conclusions, rate validity.</p>
+                <p><strong>Duration:</strong> Approximately 5 minutes.</p>
+                <p><strong>Data:</strong> Anonymous responses only. No identifying information collected.</p>
+                <p><strong>Rights:</strong> Voluntary participation. Withdraw anytime without penalty.</p>
+            </div>
+            <label class="checkbox-container">
+                <input type="checkbox" id="consent-check">
+                <span class="checkmark"></span>
+                <span>I am 18+ and agree to participate</span>
+            </label>
+            <button class="btn btn-primary" id="consent-btn" disabled>Continue</button>
+        </div>
+    </section>
+
+    <!-- INSTRUCTIONS -->
+    <section id="instructions" class="screen">
+        <div class="container">
+            <div class="progress-dots">
+                <span class="dot complete"></span>
+                <span class="dot active"></span>
+                <span class="dot"></span>
+            </div>
+            <h2>How It Works</h2>
+            <div class="instruction-steps">
+                <div class="inst-step">
+                    <div class="inst-icon">
+                        <svg viewBox="0 0 40 40">
+                            <polygon points="20,5 35,30 5,30" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <line x1="20" y1="30" x2="20" y2="38" stroke="currentColor" stroke-width="2"/>
+                            <text x="20" y="42" text-anchor="middle" font-size="8">?</text>
+                        </svg>
+                    </div>
+                    <p><strong>See structure</strong><br>View the shape of an argument</p>
+                </div>
+                <div class="inst-step">
+                    <div class="inst-icon">
+                        <svg viewBox="0 0 40 40">
+                            <circle cx="12" cy="20" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <rect x="24" y="14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <polygon points="42,14 48,26 36,26" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <p><strong>Predict</strong><br>What shape fits the conclusion?</p>
+                </div>
+                <div class="inst-step">
+                    <div class="inst-icon">
+                        <svg viewBox="0 0 40 40">
+                            <line x1="5" y1="20" x2="35" y2="20" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="20" cy="20" r="6" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <p><strong>Rate</strong><br>Judge validity and satisfaction</p>
+                </div>
+            </div>
+            <div class="note-box">
+                <span class="note-icon">✦</span>
+                <p>Trust your intuitions. There are no right or wrong answers.</p>
+            </div>
+            <button class="btn btn-primary" id="start-trials-btn">Start</button>
+        </div>
+    </section>
+
+    <!-- TRIAL -->
+    <section id="trial" class="screen">
+        <div class="container trial-container">
+            <div class="trial-progress">
+                <span id="trial-counter">1 / 8</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="trial-progress-bar"></div>
+                </div>
+            </div>
+            <div id="trial-content"></div>
+        </div>
+    </section>
+
+    <!-- POST-STUDY -->
+    <section id="post-study" class="screen">
+        <div class="container">
+            <div class="progress-dots">
+                <span class="dot complete"></span>
+                <span class="dot complete"></span>
+                <span class="dot active"></span>
+            </div>
+            <h2>Final Questions</h2>
+            <form id="post-form">
+                <div class="form-group">
+                    <label>How much did you rely on the visual structure when judging validity?</label>
+                    <div class="scale-row">
+                        <span class="scale-label">Not at all</span>
+                        <div class="scale-options" id="reliance-scale">
+                            <label class="scale-opt"><input type="radio" name="reliance" value="1" required><span>1</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="2"><span>2</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="3"><span>3</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="4"><span>4</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="5"><span>5</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="6"><span>6</span></label>
+                            <label class="scale-opt"><input type="radio" name="reliance" value="7"><span>7</span></label>
+                        </div>
+                        <span class="scale-label">Completely</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>How familiar are you with formal logic?</label>
+                    <div class="scale-row">
+                        <span class="scale-label">Novice</span>
+                        <div class="scale-options" id="expertise-scale">
+                            <label class="scale-opt"><input type="radio" name="expertise" value="1" required><span>1</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="2"><span>2</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="3"><span>3</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="4"><span>4</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="5"><span>5</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="6"><span>6</span></label>
+                            <label class="scale-opt"><input type="radio" name="expertise" value="7"><span>7</span></label>
+                        </div>
+                        <span class="scale-label">Expert</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Attention check: Type the word <strong>logic</strong></label>
+                    <input type="text" id="attention" required placeholder="Type here...">
+                </div>
+                <button type="submit" class="btn btn-primary">Complete</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- DEBRIEF -->
+    <section id="debrief" class="screen">
+        <div class="container">
+            <div class="complete-icon">
+                <svg viewBox="0 0 60 60">
+                    <circle cx="30" cy="30" r="28" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="18,30 26,38 42,22" fill="none" stroke="currentColor" stroke-width="3"/>
+                </svg>
+            </div>
+            <h2>Thank You!</h2>
+            <div class="completion-code" id="completion-code">GL-XXXXXX</div>
+            <p class="code-instruction">Copy this code for Prolific</p>
+            <div class="debrief-box">
+                <h3>About This Study</h3>
+                <p>We investigated whether Gestalt perceptual principles (symmetry, closure, continuity) influence logical judgment independently of actual argument validity.</p>
+                <p>This connects research on Bayesian cognition (Tenenbaum), cultural evolution of reasoning (Sobchuk), and experimental philosophy.</p>
+                <p class="contact">Questions? Contact: <a href="mailto:gestaltlogic@university.edu">gestaltlogic@university.edu</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/stimuli.js"></script>
+    <script src="js/experiment.js"></script>
+</body>
+</html>
