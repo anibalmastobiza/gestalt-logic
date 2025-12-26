@@ -7,9 +7,9 @@ var STIMULI = [
         structure: {
             nodes: [
                 {id: "P1", x: 140, y: 30, shape: "diamond"},
-                {id: "P2", x: 80, y: 90, shape: "diamond"},
-                {id: "P3", x: 200, y: 90, shape: "diamond"},
-                {id: "C", x: 140, y: 160, shape: "diamond"}
+                {id: "P2", x: 70, y: 100, shape: "diamond"},
+                {id: "P3", x: 210, y: 100, shape: "diamond"},
+                {id: "C", x: 140, y: 170, shape: "diamond"}
             ],
             edges: [
                 {from: "P1", to: "P2"},
@@ -36,9 +36,9 @@ var STIMULI = [
         structure: {
             nodes: [
                 {id: "P1", x: 140, y: 30, shape: "circle"},
-                {id: "P2", x: 80, y: 90, shape: "circle"},
-                {id: "P3", x: 200, y: 90, shape: "circle"},
-                {id: "C", x: 140, y: 160, shape: "circle"}
+                {id: "P2", x: 70, y: 100, shape: "circle"},
+                {id: "P3", x: 210, y: 100, shape: "circle"},
+                {id: "C", x: 140, y: 170, shape: "circle"}
             ],
             edges: [
                 {from: "P1", to: "P2"},
@@ -59,18 +59,18 @@ var STIMULI = [
     },
     {
         id: "S3",
-        type: "asymmetric",
+        type: "linear",
         validity: "valid",
-        elegance: "low",
+        elegance: "medium",
         structure: {
             nodes: [
-                {id: "P1", x: 60, y: 30, shape: "square"},
-                {id: "P2", x: 180, y: 50, shape: "triangle"},
-                {id: "P3", x: 100, y: 110, shape: "circle"},
-                {id: "C", x: 200, y: 160, shape: "square"}
+                {id: "P1", x: 140, y: 25, shape: "square"},
+                {id: "P2", x: 140, y: 85, shape: "square"},
+                {id: "P3", x: 140, y: 145, shape: "square"},
+                {id: "C", x: 140, y: 205, shape: "square"}
             ],
             edges: [
-                {from: "P1", to: "P3"},
+                {from: "P1", to: "P2"},
                 {from: "P2", to: "P3"},
                 {from: "P3", to: "C"}
             ]
@@ -87,25 +87,26 @@ var STIMULI = [
     },
     {
         id: "S4",
-        type: "asymmetric",
+        type: "broken",
         validity: "invalid",
         elegance: "low",
         structure: {
             nodes: [
-                {id: "P1", x: 50, y: 40, shape: "triangle"},
-                {id: "P2", x: 150, y: 30, shape: "square"},
-                {id: "P3", x: 220, y: 100, shape: "circle"},
-                {id: "C", x: 80, y: 160, shape: "triangle"}
+                {id: "P1", x: 70, y: 40, shape: "triangle"},
+                {id: "P2", x: 210, y: 40, shape: "square"},
+                {id: "P3", x: 210, y: 120, shape: "circle"},
+                {id: "C", x: 70, y: 170, shape: "triangle"}
             ],
             edges: [
                 {from: "P1", to: "C"},
-                {from: "P2", to: "P3"}
+                {from: "P2", to: "P3"},
+                {from: "P3", to: "C", dashed: true}
             ]
         },
         content: {
             premises: [
                 "The universe is vast and complex.",
-                "Complex things require designers.",
+                "Complex things often have causes.",
                 "Humans can appreciate beauty."
             ],
             conclusion: "Therefore, life has objective meaning."
@@ -114,32 +115,33 @@ var STIMULI = [
     },
     {
         id: "S5",
-        type: "circular",
+        type: "convergent",
         validity: "valid",
-        elegance: "medium",
+        elegance: "high",
         structure: {
             nodes: [
-                {id: "P1", x: 140, y: 30, shape: "circle"},
-                {id: "P2", x: 220, y: 100, shape: "circle"},
-                {id: "P3", x: 180, y: 170, shape: "circle"},
-                {id: "C", x: 80, y: 130, shape: "circle"}
+                {id: "P1", x: 60, y: 40, shape: "triangle"},
+                {id: "P2", x: 140, y: 40, shape: "triangle"},
+                {id: "P3", x: 220, y: 40, shape: "triangle"},
+                {id: "M", x: 140, y: 110, shape: "triangle"},
+                {id: "C", x: 140, y: 175, shape: "triangle"}
             ],
             edges: [
-                {from: "P1", to: "P2"},
-                {from: "P2", to: "P3"},
-                {from: "P3", to: "C"},
-                {from: "C", to: "P1", dashed: true}
+                {from: "P1", to: "M"},
+                {from: "P2", to: "M"},
+                {from: "P3", to: "M"},
+                {from: "M", to: "C"}
             ]
         },
         content: {
             premises: [
-                "Knowledge requires justified true belief.",
-                "Justification depends on reliable processes.",
-                "Reliability is established through past success."
+                "Consciousness cannot be reduced to physical processes.",
+                "Mental states have causal power.",
+                "Subjective experience is irreducible."
             ],
-            conclusion: "Therefore, knowledge is possible only with track records."
+            conclusion: "Therefore, physicalism is incomplete."
         },
-        conclusionShape: "circle"
+        conclusionShape: "triangle"
     },
     {
         id: "S6",
@@ -148,9 +150,9 @@ var STIMULI = [
         elegance: "medium",
         structure: {
             nodes: [
-                {id: "P1", x: 140, y: 30, shape: "square"},
+                {id: "P1", x: 140, y: 35, shape: "square"},
                 {id: "P2", x: 220, y: 100, shape: "square"},
-                {id: "P3", x: 180, y: 170, shape: "square"},
+                {id: "P3", x: 180, y: 175, shape: "square"},
                 {id: "C", x: 80, y: 130, shape: "square"}
             ],
             edges: [
@@ -172,48 +174,51 @@ var STIMULI = [
     },
     {
         id: "S7",
-        type: "convergent",
+        type: "hierarchical",
         validity: "valid",
         elegance: "high",
         structure: {
             nodes: [
-                {id: "P1", x: 60, y: 30, shape: "triangle"},
-                {id: "P2", x: 140, y: 30, shape: "triangle"},
-                {id: "P3", x: 220, y: 30, shape: "triangle"},
-                {id: "C", x: 140, y: 150, shape: "triangle"}
+                {id: "P1", x: 80, y: 30, shape: "circle"},
+                {id: "P2", x: 200, y: 30, shape: "circle"},
+                {id: "M1", x: 80, y: 100, shape: "circle"},
+                {id: "M2", x: 200, y: 100, shape: "circle"},
+                {id: "C", x: 140, y: 170, shape: "circle"}
             ],
             edges: [
-                {from: "P1", to: "C"},
-                {from: "P2", to: "C"},
-                {from: "P3", to: "C"}
+                {from: "P1", to: "M1"},
+                {from: "P2", to: "M2"},
+                {from: "M1", to: "C"},
+                {from: "M2", to: "C"}
             ]
         },
         content: {
             premises: [
-                "Consciousness cannot be reduced to physical processes.",
-                "Mental states have causal power.",
-                "Subjective experience is irreducible."
+                "Knowledge requires justified true belief.",
+                "Justification depends on reliable processes.",
+                "Reliability is established through evidence."
             ],
-            conclusion: "Therefore, physicalism is incomplete."
+            conclusion: "Therefore, knowledge requires evidence."
         },
-        conclusionShape: "triangle"
+        conclusionShape: "circle"
     },
     {
         id: "S8",
-        type: "divergent",
+        type: "scattered",
         validity: "invalid",
         elegance: "low",
         structure: {
             nodes: [
                 {id: "P1", x: 140, y: 30, shape: "diamond"},
-                {id: "C1", x: 60, y: 120, shape: "circle"},
-                {id: "C2", x: 140, y: 140, shape: "square"},
-                {id: "C3", x: 220, y: 120, shape: "triangle"}
+                {id: "P2", x: 60, y: 90, shape: "circle"},
+                {id: "P3", x: 220, y: 110, shape: "triangle"},
+                {id: "C", x: 140, y: 175, shape: "square"}
             ],
             edges: [
-                {from: "P1", to: "C1"},
-                {from: "P1", to: "C2"},
-                {from: "P1", to: "C3"}
+                {from: "P1", to: "P2"},
+                {from: "P1", to: "P3"},
+                {from: "P2", to: "C", dashed: true},
+                {from: "P3", to: "C", dashed: true}
             ]
         },
         content: {
